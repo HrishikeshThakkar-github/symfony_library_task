@@ -4,7 +4,13 @@
 
 {% block body %}
     <div class="alert alert-success" role="alert">
-        <h4 class="alert-heading">Welcome, Admin!</h4>
+        {% if app.user %}
+            <h1>Welcome, {{ app.user.adminName }}</h1>
+        {% else %}
+            <h1>Welcome, Guest</h1>
+        {% endif %}
         <p>You have successfully registered as an administrator. This is your admin dashboard.</p>
+        <a href="{{ path('app_logout') }}" class="btn btn-success btn-lg">Logout</a>
+
     </div>
 {% endblock %}
