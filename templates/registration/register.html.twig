@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ type|capitalize }} Registration{% endblock %}
+
+{% block body %}
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            Register as {{ type|capitalize }}
+        </div>
+        <div class="card-body">
+            {{ form_start(registrationForm) }}
+
+            <div class="mb-3">
+                {{ form_label(registrationForm.email) }}
+                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(registrationForm.plainPassword) }}
+                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(registrationForm.plainPassword) }}
+            </div>
+
+            {% if registrationForm.adminName is defined %}
+                <div class="mb-3">
+                    {{ form_label(registrationForm.adminName) }}
+                    {{ form_widget(registrationForm.adminName, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(registrationForm.adminName) }}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-success w-100">Register</button>
+
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+{% endblock %}

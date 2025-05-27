@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block body %}
+    <div class="text-center">
+        <h1 class="mb-4">Register as</h1>
+        <a href="{{ path('app_register', {type: 'customer'}) }}" class="btn btn-primary me-2">Customer</a>
+        <a href="{{ path('app_register', {type: 'admin'}) }}" class="btn btn-danger">Admin</a>
+    </div>
+{% endblock %}
