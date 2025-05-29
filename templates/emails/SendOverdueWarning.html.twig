@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Overdue Book Warning</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 30px;
+        }
+        .container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 650px;
+            margin: auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+        }
+        h2 {
+            color: #c0392b;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        table th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            background-color: #c0392b;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            margin-top: 25px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Overdue Book Alert</h2>
+
+    <p>Dear {{ user.email }},</p>
+
+    <p>Our records show that you have <strong>{{ loans|length }}</strong> overdue book(s) that were borrowed more than 25 days ago.</p>
+
+    <p>Please return the following books to avoid further action:</p>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Loaned On</th>
+            <th>Days Overdue</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for loan in loans %}
+            <tr>
+                <td>{{ loan.book.title }}</td>
+                <td>{{ loan.book.author }}</td>
+                <td>{{ loan.loanedAt|date('Y-m-d') }}</td>
+                <td>{{ loan.loanedAt|days_overdue }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p>
+        Kindly return the books or reach out if you believe there is an error.
+    </p>
+
+    <a href="{{ returnLink }}" class="button">View My Borrowed Books</a>
+
+    <div class="footer">
+        &copy; {{ "now"|date("Y") }} Library Management System
+    </div>
+</div>
+</body>
+</html>
