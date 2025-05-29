@@ -5,9 +5,13 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -15,12 +19,14 @@ class RegistrationController extends AbstractController
 {
     /**
      * @Route("/register/{type}", name="app_register")
+     * @throws TransportExceptionInterface
      */
     public function register(
         string $type,
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        MailerInterface $mailer
     ): Response {
         if (!in_array($type, ['admin', 'customer'])) {
             throw $this->createNotFoundException('Invalid user type');
@@ -40,6 +46,21 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+//            $email=(new Email())
+//                ->from('hrishi.pvt@gmail.com')
+//                ->to('hrishithakkar2332@gmail.com')
+//                ->subject('Test Email')
+//                ->text('This is a plain text email.');
+
+            $email = (new TemplatedEmail())
+                ->from('hrishikeshthakkar.19@gmail.com')
+                ->to($user->getEmail())
+                ->htmlTemplate('emails/registration.html.twig')
+            ->context([
+                'user' => $user,
+            ]);
+
+            $mailer->send($email);
             //return $this->redirectToRoute($type === 'admin' ? 'admin_dashboard' : 'customer_dashboard');
             return $this->redirectToRoute('app_login');
         }
