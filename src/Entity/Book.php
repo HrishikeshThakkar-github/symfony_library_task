@@ -35,7 +35,7 @@ class Book
     private $isAvailable;
 
     /**
-     * @ORM\OneToMany(targetEntity=Loan::class, mappedBy="book")
+     * @ORM\OneToMany(targetEntity=Loan::class, mappedBy="book", orphanRemoval=true, cascade={"remove"})
      */
     private $loans;
 

@@ -28,19 +28,19 @@ class Loan
     private $dueAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime",nullable=true)
      */
     private $returendAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=book::class, inversedBy="loans")
+     * @ORM\ManyToOne(targetEntity=Book::class, inversedBy="loans")
      */
-    private $book;
+    private $Book;
 
     /**
-     * @ORM\ManyToOne(targetEntity=user::class, inversedBy="loans")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="loans")
      */
-    private $user;
+    private $User;
 
     /**
      * @ORM\PrePersist
@@ -64,6 +64,10 @@ class Loan
     public function setLoanedAt(\DateTimeInterface $loanedAt): self
     {
         $this->loanedAt = $loanedAt;
+
+        if (!$this->dueAt) {
+            $this->dueAt = (clone $loanedAt)->modify('+14 days');
+        }
 
         return $this;
     }
@@ -92,27 +96,29 @@ class Loan
         return $this;
     }
 
-    public function getBook(): ?book
+    public function getBook(): ?Book
     {
-        return $this->book;
+        return $this->Book;
     }
 
-    public function setBook(?book $book): self
+    public function setBook(?Book $Book): self
     {
-        $this->book = $book;
+        $this->Book = $Book;
 
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
-        return $this->user;
+        return $this->User;
     }
 
-    public function setUser(?user $user): self
+    public function setUser(?User $User): self
     {
-        $this->user = $user;
+        $this->User = $User;
 
         return $this;
     }
 }
+
+

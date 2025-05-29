@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,7 +40,8 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute($type === 'admin' ? 'admin_dashboard' : 'customer_dashboard');
+            //return $this->redirectToRoute($type === 'admin' ? 'admin_dashboard' : 'customer_dashboard');
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [
@@ -51,9 +53,13 @@ class RegistrationController extends AbstractController
     /**
      * @Route("/admin/dashboard", name="admin_dashboard")
      */
-    public function adminDashboard(): Response
+    public function adminDashboard(BookRepository $bookRepository): Response
     {
-        return $this->render('Dashboard/admin.html.twig');
+        $books = $bookRepository->findAll();
+
+        return $this->render('book/index.html.twig', [
+            'books' => $books,
+        ]);
     }
 
     /**

@@ -1,0 +1,21 @@
+{{ form_start(form) }}
+<div class="mb-3">
+    {{ form_label(form.title, null, {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+</div>
+
+<div class="mb-3">
+    {{ form_label(form.author, null, {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.author, {'attr': {'class': 'form-control'}}) }}
+</div>
+
+{# Optional: only render isAvailable if you actually want to show it #}
+    {% if form.isAvailable is defined %}
+        <div class="form-check mb-3">
+            {{ form_widget(form.isAvailable, {'attr': {'class': 'form-check-input'}}) }}
+            {{ form_label(form.isAvailable, null, {'label_attr': {'class': 'form-check-label'}}) }}
+        </div>
+    {% endif %}
+
+<button class="btn btn-primary">Save</button>
+{{ form_end(form) }}
