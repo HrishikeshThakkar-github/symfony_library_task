@@ -5,10 +5,11 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Entity\Loan;
+use App\Event\BookBorrowEvent;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,7 +19,7 @@ class LoanController extends AbstractController
     /**
      * @Route("/borrow/{id}", name="borrow_book")
      */
-    public function borrow(Book $book, EntityManagerInterface $em): Response
+    public function borrow(Book $book, EntityManagerInterface $em, EventDispatcherInterface $dispatcher): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -32,14 +33,8 @@ class LoanController extends AbstractController
         $user = $this->getUser(); // Logged-in customer
 
         $loan = new Loan();
-        $loan->setLoanedAt(new \DateTime());
-        $loan->setBook($book);
-        $loan->setUser($user);
-
-        $book->setIsAvailable(false); // mark book as unavailable
-
-        $em->persist($loan);
-        $em->flush();
+        $event =new BookBorrowEvent($loan,$book,$user);
+        $dispatcher->dispatch($event,BookBorrowEvent::NAME);
 
         $this->addFlash('success', 'You have successfully borrowed the book.');
 
