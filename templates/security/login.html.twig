@@ -10,6 +10,10 @@
                     <h5 class="mb-0">Login</h5>
                 </div>
                 <div class="card-body">
+
+                    {% for  flash in app.flashes('success') %}
+                        <div class="alert alert-success" role="alert">{{ flash }}</div>
+                    {% endfor %}
                     {% if error %}
                         <div class="alert alert-danger">
                             {{ error.messageKey|trans(error.messageData, 'security') }}

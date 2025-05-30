@@ -1,12 +1,15 @@
 <?php
 namespace App\Security;
 
+use App\Repository\UserRepository;
+use http\Client\Curl\User;
 use http\Env\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -24,10 +27,15 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public const LOGIN_ROUTE = 'app_login';
 
     private $urlGenerator;
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    public function __construct(UrlGeneratorInterface $urlGenerator, UserRepository $userRepository)
     {
         $this->urlGenerator = $urlGenerator;
+        $this->userRepository = $userRepository;
     }
 
     public function authenticate(Request $request): Passport
@@ -35,6 +43,17 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $email = $request->request->get('email', '');
 
         $request->getSession()->set(Security::LAST_USERNAME, $email);
+        $user = $this->userRepository->findOneBy(['email' => $email]);
+
+        if (!$user) {
+            // Email doesn't exist — let Symfony handle wrong credentials
+            throw new CustomUserMessageAuthenticationException('Invalid credentials.');
+        }
+
+        if (!$user->isIsVerified()) {
+            // Email not verified — block login attempt
+            throw new CustomUserMessageAuthenticationException('Please verify your email before logging in.');
+        }
 
         return new Passport(
             new UserBadge($email),

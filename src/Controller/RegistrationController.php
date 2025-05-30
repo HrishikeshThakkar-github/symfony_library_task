@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\BookRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +15,8 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -26,7 +29,8 @@ class RegistrationController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
-        MailerInterface $mailer
+        MailerInterface $mailer,
+        VerifyEmailHelperInterface $helper
     ): Response {
         if (!in_array($type, ['admin', 'customer'])) {
             throw $this->createNotFoundException('Invalid user type');
@@ -44,7 +48,15 @@ class RegistrationController extends AbstractController
             $user->setRoles([$type === 'admin' ? 'ROLE_ADMIN' : 'ROLE_CUSTOMER']);
 
             $entityManager->persist($user);
-            $entityManager->flush();
+            $entityManager->flush($user);
+
+            $signatureComponents=$helper->generateSignature(
+              'app_verify_email',
+                $user->getId(),
+                $user->getEmail(),
+                ['id' => $user->getId()]
+            );
+            $signedUrl = $signatureComponents->getSignedUrl();
 
 //            $email=(new Email())
 //                ->from('hrishi.pvt@gmail.com')
@@ -56,13 +68,17 @@ class RegistrationController extends AbstractController
                 ->from('hrishikeshthakkar.19@gmail.com')
                 ->to($user->getEmail())
                 ->htmlTemplate('emails/registration.html.twig')
-            ->context([
+                ->context([
                 'user' => $user,
+                    'signedUrl' => $signedUrl,
             ]);
 
             $mailer->send($email);
             //return $this->redirectToRoute($type === 'admin' ? 'admin_dashboard' : 'customer_dashboard');
-            return $this->redirectToRoute('app_login');
+            return $this->render('registration/verifyEmail.html.twig', [
+                'user' => $user,
+            ]);
+
         }
 
         return $this->render('registration/register.html.twig', [
@@ -89,5 +105,34 @@ class RegistrationController extends AbstractController
     public function customerDashboard(): Response
     {
         return $this->render('Dashboard/customer.html.twig');
+    }
+
+    /**
+    * @Route("/verify",name="app_verify_email")
+     **/
+    public function verifyEmail(Request $request, UserPasswordHasherInterface $passwordHasher, VerifyEmailHelperInterface $helper, UserRepository $userRepository, EntityManagerInterface $em): Response
+    {
+        $user = $userRepository->find($request->query->get('id'));
+        if(!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+
+        try {
+            $helper->validateEmailConfirmation(
+                $request->getUri(),
+                $user->getId(),
+                $user->getEmail());
+        }catch(VerifyEmailExceptionInterface $e) {
+            $this->addFlash('error', $e->getReason());
+            return $this->redirectToRoute('app_register');
+        }
+
+        $user->setIsVerified(true);
+        $em->flush();
+
+        $this->addFlash('success', 'Email verified successfully');
+
+        return $this->redirectToRoute('app_login');
+
     }
 }

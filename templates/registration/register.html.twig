@@ -7,6 +7,9 @@
         <div class="card-header bg-primary text-white">
             Register as {{ type|capitalize }}
         </div>
+        {% for  flash in app.flashes('error') %}
+            <div class="alert alert-danger" role="alert">{{ flash }}</div>
+        {% endfor %}
         <div class="card-body">
             {{ form_start(registrationForm) }}
 
