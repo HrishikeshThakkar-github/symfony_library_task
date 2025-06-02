@@ -54,13 +54,9 @@
 <body>
 <div class="container">
     <h2>Overdue Book Alert</h2>
-
     <p>Dear {{ user.email }},</p>
-
     <p>Our records show that you have <strong>{{ loans|length }}</strong> overdue book(s) that were borrowed more than 25 days ago.</p>
-
     <p>Please return the following books to avoid further action:</p>
-
     <table>
         <thead>
         <tr>
@@ -81,13 +77,10 @@
         {% endfor %}
         </tbody>
     </table>
-
     <p>
         Kindly return the books or reach out if you believe there is an error.
     </p>
-
     <a href="{{ returnLink }}" class="button">View My Borrowed Books</a>
-
     <div class="footer">
         &copy; {{ "now"|date("Y") }} Library Management System
     </div>

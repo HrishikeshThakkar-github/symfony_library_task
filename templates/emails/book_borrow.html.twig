@@ -52,10 +52,17 @@
 <body>
 <div class="container">
     <div class="header">
+        <img src="{{ email.image('@image/logo.jpg') }}" alt="Library System">
+
         <h2>📚 Book Borrowed Successfully</h2>
     </div>
     <div class="content">
-        <p>Hello {{ user.email }},</p>
+        {% apply inline_css %}
+            <style>h1 { color: red; }</style>
+            <h1>Hello {{ user.email }},</h1>
+        {% endapply %}
+
+        <p>Hello </p>
         <p>Thank you for borrowing a book from our library. Here are the details of your transaction:</p>
         <div class="details">
             <p><strong>Book Title:</strong> {{ book.title }}</p>

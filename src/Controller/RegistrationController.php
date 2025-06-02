@@ -30,7 +30,8 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
         MailerInterface $mailer,
-        VerifyEmailHelperInterface $helper
+        VerifyEmailHelperInterface $helper,
+        UserRepository $userRepository
     ): Response {
         if (!in_array($type, ['admin', 'customer'])) {
             throw $this->createNotFoundException('Invalid user type');
@@ -43,6 +44,16 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
+
+            if ($existingUser) {
+                $this->addFlash('error', 'An account with this email already exists.');
+                return $this->render('registration/register.html.twig', [
+                    'registrationForm' => $form->createView(),
+                    'type' => $type,
+                ]);
+            }
             $hashedPassword = $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData());
             $user->setPassword($hashedPassword);
             $user->setRoles([$type === 'admin' ? 'ROLE_ADMIN' : 'ROLE_CUSTOMER']);
