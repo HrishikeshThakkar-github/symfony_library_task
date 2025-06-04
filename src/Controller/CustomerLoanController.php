@@ -18,8 +18,6 @@ class CustomerLoanController extends AbstractController
     public function index(LoanRepository $loanRepository): Response
     {
         $user = $this->getUser();
-
-        // Fetch loans for this user
         $loans = $loanRepository->findBy(['User' => $user]);
 
         return $this->render('customer_loan/index.html.twig', [

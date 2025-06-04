@@ -33,7 +33,6 @@ class LoanExtension extends AbstractExtension
         if ($dueAt < $now) {
             return 'Overdue by '.$diff->days ;
         }
-
         return $diff->days . ' days left';
     }
 }

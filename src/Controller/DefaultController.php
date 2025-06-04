@@ -15,7 +15,6 @@ class DefaultController extends AbstractController
     public function index(BookRepository $bookRepository): Response
     {
         $books = $bookRepository->findBy(['isAvailable' => true]);
-
         return $this->render('home.html.twig', [
             'books' => $books,
         ]);
