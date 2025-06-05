@@ -7,6 +7,7 @@ use App\Entity\Book;
 use App\Entity\Loan;
 use App\Event\BookBorrowEvent;
 use App\Message\BorrowBook;
+use App\Messenger\Stamp\AuditStamp;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,12 +43,13 @@ class LoanController extends AbstractController
 
 
 
-
+        $stamp = new AuditStamp('loan_created', new \DateTimeImmutable());
         //this is the implementation using messenger so that tasks can be run asynchronously
         $message = new BorrowBook($book->getId(), $user->getId());
 
         $envelope= new envelope($message,[
-            new DelayStamp(5000)
+            new DelayStamp(5000),
+            $stamp,
         ]);
 
         //this will just make a delay of 5 seconds in the starting before consumer consumes not after each message
