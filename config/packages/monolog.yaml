@@ -1,0 +1,8 @@
+monolog:
+  channels: [messenger_audit]
+  handlers:
+    messenger_audit:
+      type: stream
+      path: '%kernel.logs_dir%/messenger_audit.log'
+      level: debug
+      channels: [ 'messenger_audit' ]

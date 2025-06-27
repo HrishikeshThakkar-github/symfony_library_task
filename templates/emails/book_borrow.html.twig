@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Borrow Confirmation</title>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
+            color: #333;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 25px;
+            max-width: 600px;
+            margin: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            border-bottom: 2px solid #4a90e2;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .header h2 {
+            margin: 0;
+            color: #4a90e2;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .details {
+            background-color: #f9fafb;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #4a90e2;
+            border-radius: 4px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 13px;
+            text-align: center;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img src="{{ email.image('@image/logo.jpg') }}" alt="Library System">
+
+        <h2>📚 Book Borrowed Successfully</h2>
+    </div>
+    <div class="content">
+        {% apply inline_css %}
+            <style>h1 { color: red; }</style>
+            <h1>Hello {{ user.email }},</h1>
+        {% endapply %}
+
+        <p>Hello </p>
+        <p>Thank you for borrowing a book from our library. Here are the details of your transaction:</p>
+        <div class="details">
+            <p><strong>Book Title:</strong> {{ book.title }}</p>
+            <p><strong>Borrowed On:</strong> {{ loan.loanedAt | date('l, jS F Y') }}</p>
+            <p><strong>Return By:</strong> {{ loan.dueAt | date('l, jS F Y') }}</p>
+        </div>
+        <p>Please make sure to return the book on time to avoid any late fees.</p>
+        <p>Happy Reading!<br><strong>{{ app_name|default('Library System') }}</strong></p>
+    </div>
+    <div class="footer">
+        <p>This is an automated message. Please do not reply to this email.</p>
+    </div>
+</div>
+</body>
+</html>

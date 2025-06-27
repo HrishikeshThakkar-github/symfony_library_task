@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Borrowed Books{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">My Borrowed Books</h1>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Loaned At</th>
+            <th>Due At</th>
+            <th>Days Left</th>
+            <th>Returned At</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for loan in loans %}
+            <tr>
+                <td>{{ loan.book.title }}</td>
+                <td>{{ loan.book.author }}</td>
+                <td>{{ loan.loanedAt|date('Y-m-d') }}</td>
+                <td>{{ loan.dueAt|date('Y-m-d') }}</td>
+                <td>
+                    {% if loan.returendAt %}
+                        <span class="text-warning">returned</span>
+                    {% else %}
+                        {{ loan.dueAt|days_left }}
+                    {% endif %}
+
+                </td>
+                <td>
+                    {% if loan.returendAt %}
+                        {{ loan.returendAt|date('Y-m-d') }}
+                    {% else %}
+                        <span class="text-warning">Not returned</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not loan.returendAt %}
+                        <a href="{{ path('customer_return_book', {id: loan.id}) }}" class="btn btn-sm btn-success">Return</a>
+                    {% else %}
+                        <span class="text-muted">Completed</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="7">No loans found.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

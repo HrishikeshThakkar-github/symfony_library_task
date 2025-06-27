@@ -1,0 +1,42 @@
+framework:
+    messenger:
+        buses:
+            messenger.bus.default:
+                middleware:
+                    - App\Messenger\AuditMiddleware
+        # reset services after consuming messages
+        reset_on_message: true
+
+        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        failure_transport: failed
+# You can define different retry strategies per transport, like:
+#transports:
+#    async_emails:
+#        dsn: '%env(MAIL_TRANSPORT_DSN)%'
+#        retry_strategy:
+#            max_retries: 10
+#            delay: 10000
+#            multiplier: 1
+#            max_delay: 60000
+#
+#    async_logs:
+#        dsn: '%env(LOG_TRANSPORT_DSN)%'
+#        retry_strategy:
+#            max_retries: 1
+#            delay: 100
+
+        transports:
+            # https://symfony.com/doc/current/messenger.html#transport-configuration
+            async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            failed: 'doctrine://default?queue_name=failed'
+            # sync: 'sync://'
+#            retry_strategy:
+#                max_retries: 5
+#                delay: 5000         # start with 5 seconds
+#                multiplier: 3       # delay increases: 5s → 15s → 45s → ...
+#                max_delay: 60000    # never exceed 60 seconds
+
+        routing:
+            # Route your messages to the transports
+            # 'App\Message\YourMessage': async
+            'App\Message\BorrowBook' : async

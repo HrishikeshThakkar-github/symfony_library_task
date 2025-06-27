@@ -4,17 +4,33 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=7.2.5",
+        "php": ">=7.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/annotations": "^2.0",
+        "doctrine/doctrine-bundle": "^2.13",
+        "doctrine/doctrine-migrations-bundle": "^3.4",
+        "doctrine/orm": "^2.20",
+        "league/html-to-markdown": "^5.1",
+        "sensio/framework-extra-bundle": "^6.2",
         "symfony/console": "5.4.*",
         "symfony/dotenv": "5.4.*",
-        "symfony/flex": "^1.17|^2",
+        "symfony/flex": "^1.22",
+        "symfony/form": "5.4.*",
         "symfony/framework-bundle": "5.4.*",
+        "symfony/google-mailer": "5.4.*",
+        "symfony/mailer": "5.4.*",
+        "symfony/messenger": "5.4.*",
+        "symfony/monolog-bundle": "^3.10",
         "symfony/runtime": "5.4.*",
-        "symfony/yaml": "5.4.*"
-    },
-    "require-dev": {
+        "symfony/security-bundle": "5.4.*",
+        "symfony/twig-bundle": "5.4.*",
+        "symfony/validator": "5.4.*",
+        "symfony/yaml": "5.4.*",
+        "symfonycasts/verify-email-bundle": "^1.15",
+        "twig/cssinliner-extra": "^3.11",
+        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {
@@ -64,5 +80,10 @@
             "allow-contrib": false,
             "require": "5.4.*"
         }
+    },
+    "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.7",
+        "symfony/maker-bundle": "^1.43",
+        "zenstruck/foundry": "^1.23"
     }
 }
